@@ -702,59 +702,6 @@
   color: #1e40af;
 }
 
-/* Social Login */
-.social-login {
-  margin-top: 1.5rem;
-}
-
-.divider-text {
-  text-align: center;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.divider-text::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #e5e7eb;
-}
-
-.divider-text span {
-  background: white;
-  padding: 0 1rem;
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-.social-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.social-btn {
-  flex: 1;
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.375rem;
-  background: white;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.social-btn:hover {
-  border-color: #fdbe33;
-  background: #fef3c7;
-}
-
 .mobile-info {
   margin-top: 2rem;
   padding-top: 1.5rem;
@@ -841,21 +788,7 @@
   color: #fdbe33;
 }
 
-.social-links {
-  display: flex;
-  gap: 1rem;
-}
 
-.social-link {
-  display: inline-block;
-  font-size: 1.5rem;
-  text-decoration: none;
-  transition: transform 0.2s ease;
-}
-
-.social-link:hover {
-  transform: scale(1.2);
-}
 
 .footer-bottom {
   border-top: 1px solid #374151;

@@ -257,20 +257,6 @@ const Login = () => {
               </button>
             </div>
 
-            <div className="social-login">
-              <div className="divider-text">
-                <span>Or continue with</span>
-              </div>
-              <div className="social-buttons">
-                <button className="social-btn google">
-                  <span>🔍</span> Google
-                </button>
-                <button className="social-btn linkedin">
-                  <span>💼</span> LinkedIn
-                </button>
-              </div>
-            </div>
-
             <div className="mobile-info">
               <h3 className="mobile-title">Suvidha Foundation</h3>
               <p className="mobile-desc">
