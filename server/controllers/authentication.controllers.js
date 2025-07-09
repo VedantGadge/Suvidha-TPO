@@ -44,13 +44,12 @@ export const signInUser = (req, res) => {
       const token = jwt.sign(
         { id: user.id, username: user.username },
         JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '20m' }
       );
 
       res.json({
         message: 'Login successful',
         token,
-        user: { id: user.id, username: user.username }
       });
     }
   );
