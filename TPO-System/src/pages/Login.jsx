@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import CountUp from 'react-countup';
 import './Login.css';
 
 const Login = () => {
@@ -30,21 +31,17 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      {/* Back to Home Button */}
-      <div className="back-button">
-        <Link to="/" className="back-link">
-          ← Back to Home
-        </Link>
-      </div>
-
       <div className="login-container">
         {/* Left Section - Organization Info */}
         <div className="left-section">
           <div className="content-wrapper">
-            <div className="header-section">
-              <h1 className="main-title">Suvidha Foundation</h1>
-              <p className="subtitle">Suvidha Mahila Mandal</p>
-              <div className="divider"></div>
+              {/* Logo */}
+              <div className="logo-container">
+                <img 
+                  src="/SuvidhaLogo.png" 
+                  alt="Suvidha Foundation Logo" 
+                  className="foundation-logo"
+                />
             </div>
 
             <div className="tabs-section">
@@ -80,11 +77,28 @@ const Login = () => {
                     </p>
                     <div className="stats">
                       <div className="stat">
-                        <div className="stat-number">28+</div>
+                        <div className="stat-number">
+                          <CountUp 
+                            end={28} 
+                            duration={2.5}
+                            suffix="+"
+                            enableScrollSpy
+                            scrollSpyOnce
+                          />
+                        </div>
                         <div className="stat-label">Years</div>
                       </div>
                       <div className="stat">
-                        <div className="stat-number">10K+</div>
+                        <div className="stat-number">
+                          <CountUp 
+                            end={10000} 
+                            duration={3}
+                            suffix="+"
+                            separator=","
+                            enableScrollSpy
+                            scrollSpyOnce
+                          />
+                        </div>
                         <div className="stat-label">Lives Impacted</div>
                       </div>
                     </div>
@@ -151,13 +165,9 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right Section - Login Form */}
         <div className="right-section">
           <div className="form-container">
             <div className="form-header">
-              <div className="icon-container">
-                <div className="graduation-icon">🎓</div>
-              </div>
               <h2 className="form-title">TPO MANAGEMENT PORTAL</h2>
               <p className="form-subtitle">
                 {isSignUp ? 'Create your account' : 'Secure Login'}

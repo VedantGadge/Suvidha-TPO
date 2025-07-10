@@ -6,7 +6,6 @@
   position: relative;
 }
 
-/* Back Button */
 .back-button {
   position: absolute;
   top: 2rem;
@@ -364,6 +363,10 @@
   padding: 3rem;
   position: relative;
   overflow: hidden;
+}
+.logo-container{
+  margin-bottom: 0;
+  padding: 0;
 }
 
 @media (max-width: 1024px) {
