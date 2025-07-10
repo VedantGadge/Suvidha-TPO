@@ -157,7 +157,9 @@ body {
 }
 
 .tpo-table-wrapper {
-  max-height: 300px;
+    height: 420px;      /* Fixed height for 6.5 rows */
+  min-height: 420px;  /* Ensures minimum height */
+  max-height: 420px;  /* Prevents growing beyond this */
   overflow-y: auto;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
@@ -237,4 +239,46 @@ body {
 
 .cancel-btn {
   background-color: #f3f4f6;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  min-width: 320px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-form input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
 }

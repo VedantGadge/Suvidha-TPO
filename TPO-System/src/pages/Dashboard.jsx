@@ -9,7 +9,21 @@ const Dashboard = () => {
     email: '',
     contact: ''
   });
-  const [entries, setEntries] = useState([]);
+  const [entries, setEntries] = useState([
+    { name: "Saniya B", college: "Somaiya College", email: "saniya.b@somaiya.edu", contact: "9876543210" },
+    { name: "Vedant Gadge", college: "MIT Pune", email: "vedant.gadge@mit.edu", contact: "9123456789" },
+    { name: "Priya Sharma", college: "IIT Bombay", email: "priya.sharma@iitb.ac.in", contact: "9988776655" },
+    { name: "Rahul Mehta", college: "NIT Trichy", email: "rahul.mehta@nitt.edu", contact: "9001122334" },
+    { name: "Ayesha Khan", college: "BITS Pilani", email: "ayesha.khan@bits-pilani.ac.in", contact: "9090909090" },
+    { name: "Rohan Patel", college: "VJTI Mumbai", email: "rohan.patel@vjti.ac.in", contact: "8888777766" },
+    { name: "Sneha Desai", college: "COEP Pune", email: "sneha.desai@coep.ac.in", contact: "7777888899" },
+    { name: "Amit Singh", college: "IIT Delhi", email: "amit.singh@iitd.ac.in", contact: "6666555544" },
+    { name: "Neha Gupta", college: "SRM University", email: "neha.gupta@srmist.edu.in", contact: "5555666677" },
+    { name: "Karan Joshi", college: "PES University", email: "karan.joshi@pes.edu", contact: "4444333322" },
+    { name: "Divya Nair", college: "Anna University", email: "divya.nair@annauniv.edu", contact: "3333222211" },
+    { name: "Arjun Rao", college: "JNTU Hyderabad", email: "arjun.rao@jntuh.ac.in", contact: "2222111100" },
+    { name: "Meera Iyer", college: "Manipal University", email: "meera.iyer@manipal.edu", contact: "1111000099" }
+  ]);
 
   const openDrawer = () => setDrawerOpen(true);
   const closeDrawer = () => {
@@ -110,20 +124,25 @@ const Dashboard = () => {
         </section>
       </main>
 
-      <div className={`drawer ${drawerOpen ? 'open' : ''}`} id="drawer">
-        <div className="drawer-header">
-          <h2>Add TPO</h2>
-          <button onClick={closeDrawer}>✕</button>
+      {/* Modal for Add TPO */}
+      {drawerOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Add TPO</h2>
+              <button onClick={closeDrawer} className="close-btn">✕</button>
+            </div>
+            <form className="modal-form" onSubmit={handleSubmit}>
+              <input type="text" id="name" placeholder="Name of Person" required value={formData.name} onChange={handleChange} />
+              <input type="text" id="college" placeholder="Name of College" required value={formData.college} onChange={handleChange} />
+              <input type="email" id="email" placeholder="Email ID" required value={formData.email} onChange={handleChange} />
+              <input type="text" id="contact" placeholder="Contact No." required maxLength="10" value={formData.contact} onChange={handleChange} />
+              <button type="submit" className="submit-btn">Add</button>
+              <button type="button" className="cancel-btn" onClick={closeDrawer}>Cancel</button>
+            </form>
+          </div>
         </div>
-        <form className="drawer-form" onSubmit={handleSubmit}>
-          <input type="text" id="name" placeholder="Name of Person" required value={formData.name} onChange={handleChange} />
-          <input type="text" id="college" placeholder="Name of College" required value={formData.college} onChange={handleChange} />
-          <input type="email" id="email" placeholder="Email ID" required value={formData.email} onChange={handleChange} />
-          <input type="text" id="contact" placeholder="Contact No." required maxLength="10" value={formData.contact} onChange={handleChange} />
-          <button type="submit" className="submit-btn">Add</button>
-          <button type="button" className="cancel-btn" onClick={closeDrawer}>Cancel</button>
-        </form>
-      </div>
+      )}
     </div>
   );
 };
