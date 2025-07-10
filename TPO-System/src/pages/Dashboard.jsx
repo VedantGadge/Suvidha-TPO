@@ -52,7 +52,7 @@ const Dashboard = () => {
         <header className="dashboard-header">
           <div className="header-left">
             <div className="logo">
-              <img src="suvidha-logo1.jpeg" alt="Suvidha Foundation Logo" className="logo-img" />
+              <img src="SuvidhaLogo.png" alt="Suvidha Foundation Logo" className="logo-img" />
             </div>
             <div className="portal-info">
               <h2>TPO MANAGEMENT PORTAL</h2>

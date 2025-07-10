@@ -31,13 +31,12 @@ body {
 }
 
 .logo {
-  background: #fdbe33;
   padding: 0.5rem;
   border-radius: 0.5rem;
 }
 
 .logo-img {
-  height: 50px;
+  height: 70px;
   width: auto;
   border-radius: 0.5rem;
   display: block;
@@ -281,4 +280,80 @@ body {
   width: 100%;
   margin-bottom: 1rem;
   padding: 0.5rem;
+}
+
+/* Responsive styles for Dashboard */
+
+@media (max-width: 900px) {
+  .dashboard-container {
+    max-width: 98vw;
+    margin: 1rem auto;
+  }
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .stats-cards {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .tpo-section {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-main {
+    padding: 1rem;
+  }
+  .tpo-section {
+    padding: 0.5rem;
+  }
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .stat-card {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+  .tpo-table-wrapper {
+    height: 320px;
+    min-height: 320px;
+    max-height: 320px;
+  }
+  .tpo-table th, .tpo-table td {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .modal {
+    min-width: unset;
+    width: 98vw;
+    padding: 1rem;
+  }
+  .logo-img {
+    height: 36px;
+  }
+  .header-wrapper {
+    border-radius: 0.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal {
+    width: 100vw;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+  }
+  .tpo-section {
+    padding: 0.25rem;
+  }
 }
