@@ -8,6 +8,7 @@ function App() {
     <div className="app">
       <Router>
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>

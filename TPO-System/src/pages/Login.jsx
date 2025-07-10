@@ -1,5 +1,8 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import CountUp from 'react-countup';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
 
 const Login = () => {
@@ -11,40 +14,43 @@ const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [activeTab, setActiveTab] = useState('about');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.showLogoutToast) {
+      toast.info('You have been logged out.');
+      // Optionally clear the state so it doesn't show again on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isSignUp && password !== confirmPassword) {
-      alert('Passwords do not match!');
+      toast.error('Passwords do not match!');
       return;
     }
-    console.log('Form submitted:', { name, email, password, isSignUp });
-    alert(`${isSignUp ? 'Account created' : 'Logged in'} successfully!`);
-    
     // Simulate successful login - redirect to dashboard
     if (!isSignUp) {
-      // You can replace this with your actual login logic
-      navigate('/dashboard');
+      navigate('/dashboard', { state: { showLoginToast: true } });
+    } else {
+      toast.success('Account created successfully!');
     }
   };
 
   return (
     <div className="login-page">
-      {/* Back to Home Button */}
-      <div className="back-button">
-        <Link to="/" className="back-link">
-          ← Back to Home
-        </Link>
-      </div>
-
       <div className="login-container">
         {/* Left Section - Organization Info */}
         <div className="left-section">
           <div className="content-wrapper">
-            <div className="header-section">
-              <h1 className="main-title">Suvidha Foundation</h1>
-              <p className="subtitle">Suvidha Mahila Mandal</p>
-              <div className="divider"></div>
+              {/* Logo */}
+              <div className="logo-container">
+                <img 
+                  src="/SuvidhaLogo.png" 
+                  alt="Suvidha Foundation Logo" 
+                  className="foundation-logo"
+                />
             </div>
 
             <div className="tabs-section">
@@ -80,11 +86,29 @@ const Login = () => {
                     </p>
                     <div className="stats">
                       <div className="stat">
-                        <div className="stat-number">28+</div>
+                        <div className="stat-number">
+                          <CountUp 
+                            end={28} 
+                            duration={2.5}
+                            suffix="+"
+                            enableScrollSpy
+                            scrollSpyOnce
+                          />
+                        </div>
                         <div className="stat-label">Years</div>
                       </div>
                       <div className="stat">
-                        <div className="stat-number">10K+</div>
+                        <div className="stat-number">
+                          <CountUp 
+                            start={6000}
+                            end={10000} 
+                            duration={2.5}
+                            suffix="+"
+                            separator=","
+                            enableScrollSpy
+                            scrollSpyOnce
+                          />
+                        </div>
                         <div className="stat-label">Lives Impacted</div>
                       </div>
                     </div>
@@ -151,13 +175,9 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right Section - Login Form */}
         <div className="right-section">
           <div className="form-container">
             <div className="form-header">
-              <div className="icon-container">
-                <div className="graduation-icon">🎓</div>
-              </div>
               <h2 className="form-title">TPO MANAGEMENT PORTAL</h2>
               <p className="form-subtitle">
                 {isSignUp ? 'Create your account' : 'Secure Login'}
@@ -267,6 +287,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

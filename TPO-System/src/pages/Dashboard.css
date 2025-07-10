@@ -5,7 +5,8 @@ body {
 }
 
 .dashboard-container {
-  max-width: 1200px;
+  width: 90vw;
+  min-height: 100vh;
   margin: 2rem auto;
 }
 
@@ -156,9 +157,7 @@ body {
 }
 
 .tpo-table-wrapper {
-    height: 420px;      /* Fixed height for 6.5 rows */
-  min-height: 420px;  /* Ensures minimum height */
-  max-height: 420px;  /* Prevents growing beyond this */
+  height: 430px;      /* Fixed height for 6.5 rows */
   overflow-y: auto;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
