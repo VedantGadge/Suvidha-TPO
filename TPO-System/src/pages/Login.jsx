@@ -19,6 +19,8 @@ const Login = () => {
   useEffect(() => {
     if (location.state?.showLogoutToast) {
       toast.info('You have been logged out.');
+      // Clear the stored email on logout
+      localStorage.removeItem('loggedInEmail');
       // Optionally clear the state so it doesn't show again on refresh
       window.history.replaceState({}, document.title);
     }
@@ -30,8 +32,9 @@ const Login = () => {
       toast.error('Passwords do not match!');
       return;
     }
-    // Simulate successful login - redirect to dashboard
+    // Simulate successful login - store email and redirect to dashboard
     if (!isSignUp) {
+      localStorage.setItem('loggedInEmail', email);
       navigate('/dashboard', { state: { showLoginToast: true } });
     } else {
       toast.success('Account created successfully!');

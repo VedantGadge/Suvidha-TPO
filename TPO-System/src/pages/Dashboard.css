@@ -354,6 +354,48 @@ body {
   color: #fff;
 }
 
+.edit-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 0.3rem 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.icon-btn:focus {
+  outline: 2px solid #1976d2;
+}
+.edit-btn svg {
+  stroke: #1976d2;
+}
+.edit-btn:hover {
+  background: #e3f2fd;
+}
+.delete-btn svg {
+  stroke: #d32f2f;
+}
+.delete-btn:hover {
+  background: #ffebee;
+}
+
 /* Responsive styles for Dashboard */
 
 @media (max-width: 900px) {

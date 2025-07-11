@@ -14,11 +14,30 @@ const Dashboard = () => {
     contact: ''
   });
   const [entries, setEntries] = useState([]);
+  const [loggedInEmail, setLoggedInEmail] = useState('');
   const [showConfirm, setShowConfirm] = useState(false); // Custom confirm modal state
   const [pendingSubmit, setPendingSubmit] = useState(false); // Track if submit is waiting for confirm
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/students/get')
+      .then(res => res.json())
+      .then(data => {
+        const mapped = data.map(item => ({
+          name: item.name,
+          college: item.college,
+          email: item.email,
+          contact_no: item.contact || item.contact_no
+        }));
+        setEntries(mapped);
+      })
+      .catch(() => setEntries([]));
+    // Get logged-in email from localStorage
+    const email = localStorage.getItem('loggedInEmail');
+    setLoggedInEmail(email || '');
+  }, []);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/students/get')
@@ -123,7 +142,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="header-right">
-            <span className="welcome-msg">Welcome, saniya.b@somaiya.edu</span>
+            <span className="welcome-msg">{loggedInEmail ? `Welcome, ${loggedInEmail}` : 'Welcome'}</span>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
         </header>
@@ -174,6 +193,7 @@ const Dashboard = () => {
                     <th>Name of College</th>
                     <th>Email ID</th>
                     <th>Contact No.</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -184,6 +204,22 @@ const Dashboard = () => {
                       <td>{entry.college}</td>
                       <td><a href={`mailto:${entry.email}`}>{entry.email}</a></td>
                       <td>{entry.contact}</td>
+                      <td>
+                        <button className="icon-btn edit-btn" title="Edit">
+                          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14.7 2.29a1 1 0 0 1 1.42 0l1.59 1.59a1 1 0 0 1 0 1.42l-9.3 9.3-2.12.71.71-2.12 9.3-9.3z" stroke="#1976d2" strokeWidth="1.5" fill="none"/>
+                            <path d="M3 17h14" stroke="#1976d2" strokeWidth="1.5" strokeLinecap="round"/>
+                          </svg>
+                        </button>
+                        <button className="icon-btn delete-btn" title="Delete">
+                          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="7" width="10" height="8" rx="1" stroke="#d32f2f" strokeWidth="1.5" fill="none"/>
+                            <path d="M8 9v4M12 9v4" stroke="#d32f2f" strokeWidth="1.5" strokeLinecap="round"/>
+                            <path d="M3 7h14" stroke="#d32f2f" strokeWidth="1.5" strokeLinecap="round"/>
+                            <path d="M8 7V5a2 2 0 0 1 4 0v2" stroke="#d32f2f" strokeWidth="1.5"/>
+                          </svg>
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
