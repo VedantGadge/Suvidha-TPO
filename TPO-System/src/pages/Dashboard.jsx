@@ -14,6 +14,9 @@ const Dashboard = () => {
     contact: ''
   });
   const [entries, setEntries] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false); // Custom confirm modal state
+  const [pendingSubmit, setPendingSubmit] = useState(false); // Track if submit is waiting for confirm
+  const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,7 +28,7 @@ const Dashboard = () => {
           name: item.name,
           college: item.college,
           email: item.email,
-          contact: item.contact_no || item.contact
+          contact_no: item.contact || item.contact_no
         }));
         setEntries(mapped);
       })
@@ -49,8 +52,16 @@ const Dashboard = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setPendingSubmit(true);
+    setShowConfirm(true);
+  };
+
+  // Called when user confirms in custom modal
+  const confirmAddTPO = async () => {
+    setShowConfirm(false);
+    setPendingSubmit(false);
     toast.warning('Adding TPO...');
     try {
       const response = await fetch('http://localhost:5000/api/students/add', {
@@ -77,9 +88,26 @@ const Dashboard = () => {
     }
   };
 
+  // Called when user cancels in custom modal
+  const cancelAddTPO = () => {
+    setShowConfirm(false);
+    setPendingSubmit(false);
+  };
+
   const handleLogout = () => {
     navigate('/login', { state: { showLogoutToast: true } });
   };
+
+  // Filtered entries based on search query
+  const filteredEntries = entries.filter(entry => {
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    return (
+      entry.name.toLowerCase().includes(lowerCaseQuery) ||
+      entry.college.toLowerCase().includes(lowerCaseQuery) ||
+      entry.email.toLowerCase().includes(lowerCaseQuery) ||
+      (entry.contact && entry.contact.toString().includes(lowerCaseQuery))
+    );
+  });
 
   return (
     <div className="dashboard-container">
@@ -130,7 +158,13 @@ const Dashboard = () => {
           </div>
 
           <div className="tpo-table-container">
-            <input type="text" className="search-input" placeholder="Search by name, college, or email..." />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search by name, college, contact no. or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
             <div className="tpo-table-wrapper">
               <table className="tpo-table">
                 <thead>
@@ -143,7 +177,7 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {entries.map((entry, index) => (
+                  {filteredEntries.map((entry, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{entry.name}</td>
@@ -172,9 +206,23 @@ const Dashboard = () => {
               <input type="text" id="college" placeholder="Name of College" required value={formData.college} onChange={handleChange} />
               <input type="email" id="email" placeholder="Email ID" required value={formData.email} onChange={handleChange} />
               <input type="text" id="contact" placeholder="Contact No." required maxLength="10" value={formData.contact} onChange={handleChange} />
-              <button type="submit" className="submit-btn">Add</button>
+              <button type="submit" className="submit-btn" disabled={pendingSubmit}>Add</button>
               <button type="button" className="cancel-btn" onClick={closeDrawer}>Cancel</button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Modal */}
+      {showConfirm && (
+        <div className="modal-overlay">
+          <div className="modal confirm-modal">
+            <h3>Confirm Add TPO</h3>
+            <p>Are you sure you want to add this TPO?</p>
+            <div className="modal-actions">
+              <button className="submit-btn" onClick={confirmAddTPO}>Confirm</button>
+              <button className="cancel-btn" onClick={cancelAddTPO}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
@@ -187,15 +235,15 @@ const Dashboard = () => {
 export default Dashboard;
 
 // { name: "Saniya B", college: "Somaiya College", email: "saniya.b@somaiya.edu", contact: "9876543210" },
-    // { name: "Vedant Gadge", college: "MIT Pune", email: "vedant.gadge@mit.edu", contact: "9123456789" },
-    // { name: "Priya Sharma", college: "IIT Bombay", email: "priya.sharma@iitb.ac.in", contact: "9988776655" },
-    // { name: "Rahul Mehta", college: "NIT Trichy", email: "rahul.mehta@nitt.edu", contact: "9001122334" },
-    // { name: "Ayesha Khan", college: "BITS Pilani", email: "ayesha.khan@bits-pilani.ac.in", contact: "9090909090" },
-    // { name: "Rohan Patel", college: "VJTI Mumbai", email: "rohan.patel@vjti.ac.in", contact: "8888777766" },
-    // { name: "Sneha Desai", college: "COEP Pune", email: "sneha.desai@coep.ac.in", contact: "7777888899" },
-    // { name: "Amit Singh", college: "IIT Delhi", email: "amit.singh@iitd.ac.in", contact: "6666555544" },
-    // { name: "Neha Gupta", college: "SRM University", email: "neha.gupta@srmist.edu.in", contact: "5555666677" },
-    // { name: "Karan Joshi", college: "PES University", email: "karan.joshi@pes.edu", contact: "4444333322" },
-    // { name: "Divya Nair", college: "Anna University", email: "divya.nair@annauniv.edu", contact: "3333222211" },
-    // { name: "Arjun Rao", college: "JNTU Hyderabad", email: "arjun.rao@jntuh.ac.in", contact: "2222111100" },
-    // { name: "Meera Iyer", college: "Manipal University", email: "meera.iyer@manipal.edu", contact: "1111000099" }
+//     { name: "Vedant Gadge", college: "MIT Pune", email: "vedant.gadge@mit.edu", contact: "9123456789" },
+//     { name: "Priya Sharma", college: "IIT Bombay", email: "priya.sharma@iitb.ac.in", contact: "9988776655" },
+//     { name: "Rahul Mehta", college: "NIT Trichy", email: "rahul.mehta@nitt.edu", contact: "9001122334" },
+//     { name: "Ayesha Khan", college: "BITS Pilani", email: "ayesha.khan@bits-pilani.ac.in", contact: "9090909090" },
+//     { name: "Rohan Patel", college: "VJTI Mumbai", email: "rohan.patel@vjti.ac.in", contact: "8888777766" },
+//     { name: "Sneha Desai", college: "COEP Pune", email: "sneha.desai@coep.ac.in", contact: "7777888899" },
+//     { name: "Amit Singh", college: "IIT Delhi", email: "amit.singh@iitd.ac.in", contact: "6666555544" },
+//     { name: "Neha Gupta", college: "SRM University", email: "neha.gupta@srmist.edu.in", contact: "5555666677" },
+//     { name: "Karan Joshi", college: "PES University", email: "karan.joshi@pes.edu", contact: "4444333322" },
+//     { name: "Divya Nair", college: "Anna University", email: "divya.nair@annauniv.edu", contact: "3333222211" },
+//     { name: "Arjun Rao", college: "JNTU Hyderabad", email: "arjun.rao@jntuh.ac.in", contact: "2222111100" },
+//     { name: "Meera Iyer", college: "Manipal University", email: "meera.iyer@manipal.edu", contact: "1111000099" }
