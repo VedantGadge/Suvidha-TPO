@@ -248,7 +248,8 @@ body {
 }
 
 .cancel-btn {
-  background-color: #f3f4f6;
+  background-color: rgb(194, 194, 194);
+  margin-left: 6.3rem;
 }
 
 .modal-overlay {
@@ -265,7 +266,7 @@ body {
 }
 
 .modal {
-  background: #fff;
+  background-color: white;
   padding: 2rem;
   border-radius: 8px;
   min-width: 320px;
