@@ -3,7 +3,6 @@ import './Dashboard.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css';
 
 const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -13,24 +12,25 @@ const Dashboard = () => {
     email: '',
     contact: ''
   });
-  const [entries, setEntries] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [entries, setEntries] = useState([
+    { name: "Saniya B", college: "Somaiya College", email: "saniya.b@somaiya.edu", contact: "9876543210" },
+    { name: "Vedant Gadge", college: "MIT Pune", email: "vedant.gadge@mit.edu", contact: "9123456789" },
+    { name: "Priya Sharma", college: "IIT Bombay", email: "priya.sharma@iitb.ac.in", contact: "9988776655" },
+    { name: "Rahul Mehta", college: "NIT Trichy", email: "rahul.mehta@nitt.edu", contact: "9001122334" },
+    { name: "Ayesha Khan", college: "BITS Pilani", email: "ayesha.khan@bits-pilani.ac.in", contact: "9090909090" },
+    { name: "Rohan Patel", college: "VJTI Mumbai", email: "rohan.patel@vjti.ac.in", contact: "8888777766" },
+    { name: "Sneha Desai", college: "COEP Pune", email: "sneha.desai@coep.ac.in", contact: "7777888899" },
+    { name: "Amit Singh", college: "IIT Delhi", email: "amit.singh@iitd.ac.in", contact: "6666555544" },
+    { name: "Neha Gupta", college: "SRM University", email: "neha.gupta@srmist.edu.in", contact: "5555666677" },
+    { name: "Karan Joshi", college: "PES University", email: "karan.joshi@pes.edu", contact: "4444333322" },
+    { name: "Divya Nair", college: "Anna University", email: "divya.nair@annauniv.edu", contact: "3333222211" },
+    { name: "Arjun Rao", college: "JNTU Hyderabad", email: "arjun.rao@jntuh.ac.in", contact: "2222111100" },
+    { name: "Meera Iyer", college: "Manipal University", email: "meera.iyer@manipal.edu", contact: "1111000099" }
+  ]);
+
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetch('http://localhost:5000/api/students/get')
-      .then(res => res.json())
-      .then(data => {
-        const mapped = data.map(item => ({
-          name: item.name,
-          college: item.college,
-          email: item.email,
-          contact: item.contact_no || item.contact
-        }));
-        setEntries(mapped);
-      })
-      .catch(() => setEntries([]));
-  }, []);
 
   useEffect(() => {
     if (location.state?.showLoginToast) {
@@ -53,25 +53,11 @@ const Dashboard = () => {
     e.preventDefault();
     toast.warning('Adding TPO...');
     try {
-      const response = await fetch('http://localhost:5000/api/students/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          college: formData.college,
-          email: formData.email,
-          contact_no: formData.contact
-        })
-      });
-      if (response.ok) {
-        const newTPO = { ...formData };
-        setEntries([...entries, newTPO]);
-        toast.success('TPO added successfully!');
-        closeDrawer();
-      } else {
-        toast.error('Failed to add TPO!');
-      }
-    // eslint-disable-next-line no-unused-vars
+      // Simulating success
+      const newTPO = { ...formData };
+      setEntries([...entries, newTPO]);
+      toast.success('TPO added successfully!');
+      closeDrawer();
     } catch (err) {
       toast.error('Server error!');
     }
@@ -80,6 +66,14 @@ const Dashboard = () => {
   const handleLogout = () => {
     navigate('/login', { state: { showLogoutToast: true } });
   };
+
+  const filteredEntries = entries.filter(entry =>
+  entry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  entry.college.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  entry.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  entry.contact.includes(searchQuery) 
+);
+
 
   return (
     <div className="dashboard-container">
@@ -130,7 +124,13 @@ const Dashboard = () => {
           </div>
 
           <div className="tpo-table-container">
-            <input type="text" className="search-input" placeholder="Search by name, college, or email..." />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search by name, college, contact no. or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
             <div className="tpo-table-wrapper">
               <table className="tpo-table">
                 <thead>
@@ -143,7 +143,7 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {entries.map((entry, index) => (
+                  {filteredEntries.map((entry, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{entry.name}</td>
@@ -159,7 +159,6 @@ const Dashboard = () => {
         </section>
       </main>
 
-      {/* Modal for Add TPO */}
       {drawerOpen && (
         <div className="modal-overlay">
           <div className="modal">
@@ -185,17 +184,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-// { name: "Saniya B", college: "Somaiya College", email: "saniya.b@somaiya.edu", contact: "9876543210" },
-    // { name: "Vedant Gadge", college: "MIT Pune", email: "vedant.gadge@mit.edu", contact: "9123456789" },
-    // { name: "Priya Sharma", college: "IIT Bombay", email: "priya.sharma@iitb.ac.in", contact: "9988776655" },
-    // { name: "Rahul Mehta", college: "NIT Trichy", email: "rahul.mehta@nitt.edu", contact: "9001122334" },
-    // { name: "Ayesha Khan", college: "BITS Pilani", email: "ayesha.khan@bits-pilani.ac.in", contact: "9090909090" },
-    // { name: "Rohan Patel", college: "VJTI Mumbai", email: "rohan.patel@vjti.ac.in", contact: "8888777766" },
-    // { name: "Sneha Desai", college: "COEP Pune", email: "sneha.desai@coep.ac.in", contact: "7777888899" },
-    // { name: "Amit Singh", college: "IIT Delhi", email: "amit.singh@iitd.ac.in", contact: "6666555544" },
-    // { name: "Neha Gupta", college: "SRM University", email: "neha.gupta@srmist.edu.in", contact: "5555666677" },
-    // { name: "Karan Joshi", college: "PES University", email: "karan.joshi@pes.edu", contact: "4444333322" },
-    // { name: "Divya Nair", college: "Anna University", email: "divya.nair@annauniv.edu", contact: "3333222211" },
-    // { name: "Arjun Rao", college: "JNTU Hyderabad", email: "arjun.rao@jntuh.ac.in", contact: "2222111100" },
-    // { name: "Meera Iyer", college: "Manipal University", email: "meera.iyer@manipal.edu", contact: "1111000099" }
