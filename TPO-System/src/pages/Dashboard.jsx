@@ -123,7 +123,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="header-right">
-            <span className="welcome-msg">{loggedInEmail ? `Welcome, ${loggedInEmail}` : 'Welcome'}</span>
+            <span className="welcome-msg">{'Welcome'}</span>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
         </header>
