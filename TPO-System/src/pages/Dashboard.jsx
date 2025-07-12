@@ -40,21 +40,6 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/students/get')
-      .then(res => res.json())
-      .then(data => {
-        const mapped = data.map(item => ({
-          name: item.name,
-          college: item.college,
-          email: item.email,
-          contact_no: item.contact || item.contact_no
-        }));
-        setEntries(mapped);
-      })
-      .catch(() => setEntries([]));
-  }, []);
-
-  useEffect(() => {
     if (location.state?.showLoginToast) {
       toast.success('Logged in successfully!');
       window.history.replaceState({}, document.title);
