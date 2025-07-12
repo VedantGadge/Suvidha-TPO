@@ -131,7 +131,7 @@ body {
 }
 
 .add-btn {
-  background-color: #fdbe33;
+  background-color: #FEC107;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
@@ -140,7 +140,7 @@ body {
 }
 
 .add-btn:hover {
-  background-color: #f59e0b;
+  background-color: #FEC107;
 }
 
 .tpo-table-container {
@@ -243,12 +243,17 @@ body {
 }
 
 .submit-btn {
-  background-color: #fdbe33;
+  background-color: #FEC107;
   color: #111827;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .cancel-btn {
-  background-color: #f3f4f6;
+  background-color: #EEEEEE;
+  color: #333333;
+  /*margin-left: 13.7rem;*/
+  margin-left: 10px;
 }
 
 .modal-overlay {
@@ -266,21 +271,24 @@ body {
 
 .modal {
   background: #fff;
-  padding: 2.5rem;
+  padding: 2rem;
   border-radius: 8px;
   min-width: 320px;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
   position: relative;
-  width: 90%;
-  min-height: 520px;
-  min-width: 320px;
-  max-width: 438px;
 }
 
 .modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  font-size: 1.7rem; 
+  font-weight: bold;
+  margin: 0;
 }
 
 .close-btn {
@@ -288,9 +296,6 @@ body {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color:#fdbe33 ;
-  padding-right: 0.2em;
-  padding-bottom: 0.6em;
 }
 
 .modal-form input {
@@ -298,8 +303,6 @@ body {
   width: 100%;
   margin-bottom: 1rem;
   padding: 0.5rem;
-  margin-top: 1rem;
-
 }
 
 .confirm-modal {
@@ -310,13 +313,20 @@ body {
   max-width: 350px;
   margin: 0 auto;
   text-align: center;
+  min-height: 170px;  
+}
+
+.modal-form input:focus {
+  border-color: #FEC107; 
+  outline: none;         
 }
 
 .modal-actions {
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: auto;     
+  margin-bottom: 0.5rem;
 }
 
 .confirm-modal .submit-btn {
@@ -328,6 +338,7 @@ body {
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s;
+  margin-top: 0.5rem;
 }
 .confirm-modal .submit-btn:hover {
   background: #0056b3;
@@ -344,6 +355,7 @@ body {
   transition: background 0.2s, color 0.2s;
   opacity: 1 !important;
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d32f2f33;
+  margin-top: 0.5rem;
 }
 .confirm-modal .cancel-btn:disabled {
   opacity: 0.5 !important;
@@ -452,6 +464,7 @@ body {
     min-width: unset;
     width: 98vw;
     padding: 1rem;
+    max-width: 98vw;
   }
   .logo-img {
     height: 36px;
@@ -466,6 +479,7 @@ body {
     width: 100vw;
     padding: 0.5rem;
     border-radius: 0.25rem;
+    max-width: 100vw;
   }
   .tpo-section {
     padding: 0.25rem;

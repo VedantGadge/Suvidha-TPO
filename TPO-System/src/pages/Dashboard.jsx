@@ -14,7 +14,6 @@ const Dashboard = () => {
     contact: ''
   });
   const [entries, setEntries] = useState([]);
-  const [loggedInEmail, setLoggedInEmail] = useState('');
   const [showConfirm, setShowConfirm] = useState(false); // Custom confirm modal state
   const [pendingSubmit, setPendingSubmit] = useState(false); // Track if submit is waiting for confirm
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
@@ -34,9 +33,6 @@ const Dashboard = () => {
         setEntries(mapped);
       })
       .catch(() => setEntries([]));
-    // Get logged-in email from localStorage
-    const email = localStorage.getItem('loggedInEmail');
-    setLoggedInEmail(email || '');
   }, []);
 
   useEffect(() => {
@@ -174,8 +170,8 @@ const Dashboard = () => {
                 <thead>
                   <tr>
                     <th>Sr No.</th>
-                    <th>Name of Person</th>
-                    <th>Name of College</th>
+                    <th>Name</th>
+                    <th>College</th>
                     <th>Email ID</th>
                     <th>Contact No.</th>
                     <th>Actions</th>
@@ -223,8 +219,8 @@ const Dashboard = () => {
               <button onClick={closeDrawer} className="close-btn">✕</button>
             </div>
             <form className="modal-form" onSubmit={handleSubmit}>
-              <input type="text" id="name" placeholder="Name of Person" required value={formData.name} onChange={handleChange} />
-              <input type="text" id="college" placeholder="Name of College" required value={formData.college} onChange={handleChange} />
+              <input type="text" id="name" placeholder="Name" required value={formData.name} onChange={handleChange} />
+              <input type="text" id="college" placeholder="College" required value={formData.college} onChange={handleChange} />
               <input type="email" id="email" placeholder="Email ID" required value={formData.email} onChange={handleChange} />
               <input type="text" id="contact" placeholder="Contact No." required maxLength="10" value={formData.contact} onChange={handleChange} />
               <button type="submit" className="submit-btn" disabled={pendingSubmit}>Add</button>
