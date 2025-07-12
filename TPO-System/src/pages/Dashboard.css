@@ -270,12 +270,15 @@ body {
 }
 
 .modal {
-  background: #fff;
+  background-color: #FFFFFF;
   padding: 2rem;
   border-radius: 8px;
   min-width: 320px;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
   position: relative;
+  width: 90%;
+  max-width: 438px;
+  min-height: 390px;
 }
 
 .modal-header {
@@ -291,11 +294,47 @@ body {
   margin: 0;
 }
 
+.icon-btn {
+  background: #f3f4f6;
+  border: none;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.icon-btn:focus {
+  outline: 2px solid #1976d2;
+}
+.edit-btn svg {
+  stroke: #1976d2;
+}
+.edit-btn:hover {
+  background: #e3f2fd;
+}
+.delete-btn svg {
+  stroke: #d32f2f;
+}
+.delete-btn:hover {
+  background: #ffebee;
+}
+
 .close-btn {
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+  color: #FEC107;
+  padding: 0 0.5rem;
+  line-height: 1;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 
 .modal-form input {
@@ -303,6 +342,12 @@ body {
   width: 100%;
   margin-bottom: 1rem;
   padding: 0.5rem;
+  font-size: 1rem;     
+  height: 2.5rem; 
+  background-color: #F9F9F9;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  color: #333;
 }
 
 .confirm-modal {
@@ -364,48 +409,6 @@ body {
 .confirm-modal .cancel-btn:hover {
   background: #d32f2f;
   color: #fff;
-}
-
-.edit-btn {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 0.4rem;
-  padding: 0.4rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.edit-btn:hover {
-  background-color: #0056b3;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  padding: 0.3rem 0.5rem;
-  border-radius: 50%;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-.icon-btn:focus {
-  outline: 2px solid #1976d2;
-}
-.edit-btn svg {
-  stroke: #1976d2;
-}
-.edit-btn:hover {
-  background: #e3f2fd;
-}
-.delete-btn svg {
-  stroke: #d32f2f;
-}
-.delete-btn:hover {
-  background: #ffebee;
 }
 
 /* Responsive styles for Dashboard */

@@ -13,9 +13,15 @@ const Dashboard = () => {
     email: '',
     contact: ''
   });
+  const [isEditMode, setIsEditMode] = useState(false); // Track if editing
+  const [editId, setEditId] = useState(null); // Store id being edited
+  const [showEditConfirm, setShowEditConfirm] = useState(false); // Edit confirm modal
+  const [pendingEdit, setPendingEdit] = useState(false); // Track if edit is waiting for confirm
   const [entries, setEntries] = useState([]);
-  const [showConfirm, setShowConfirm] = useState(false); // Custom confirm modal state
-  const [pendingSubmit, setPendingSubmit] = useState(false); // Track if submit is waiting for confirm
+  const [showConfirm, setShowConfirm] = useState(false); // Custom confirm modal state (add)
+  const [pendingSubmit, setPendingSubmit] = useState(false); // Track if submit is waiting for confirm (add)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // Custom confirm modal state (delete)
+  const [deleteId, setDeleteId] = useState(null); // Store id to delete
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,10 +31,11 @@ const Dashboard = () => {
       .then(res => res.json())
       .then(data => {
         const mapped = data.map(item => ({
+          id: item.id, // include id from backend
           name: item.name,
           college: item.college,
           email: item.email,
-          contact_no: item.contact || item.contact_no
+          contact_no: item.contact_no || item.contact
         }));
         setEntries(mapped);
       })
@@ -42,10 +49,16 @@ const Dashboard = () => {
     }
   }, [location.state]);
 
-  const openDrawer = () => setDrawerOpen(true);
+  const openDrawer = () => {
+    setIsEditMode(false);
+    setDrawerOpen(true);
+  };
   const closeDrawer = () => {
     setDrawerOpen(false);
     setFormData({ name: '', college: '', email: '', contact: '' });
+    setIsEditMode(false);
+    setEditId(null);
+    setPendingEdit(false);
   };
 
   const handleChange = (e) => {
@@ -54,8 +67,59 @@ const Dashboard = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setPendingSubmit(true);
-    setShowConfirm(true);
+    if (isEditMode) {
+      setPendingEdit(true);
+      setShowEditConfirm(true);
+    } else {
+      setPendingSubmit(true);
+      setShowConfirm(true);
+    }
+  };
+  // Edit button logic: open drawer with pre-filled data
+  const handleEditTPO = (entry) => {
+    setFormData({
+      name: entry.name,
+      college: entry.college,
+      email: entry.email,
+      contact: entry.contact_no || entry.contact || ''
+    });
+    setEditId(entry.id);
+    setIsEditMode(true);
+    setDrawerOpen(true);
+  };
+
+  // Called when user confirms in edit modal
+  const confirmEditTPO = async () => {
+    setShowEditConfirm(false);
+    setPendingEdit(false);
+    // Removed toast for 'Updating TPO...'
+    try {
+      const response = await fetch(`http://localhost:5000/api/students/update/${editId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          college: formData.college,
+          email: formData.email,
+          contact_no: formData.contact
+        })
+      });
+      if (response.ok) {
+        setEntries(entries.map(e => e.id === editId ? { ...e, ...formData, contact_no: formData.contact } : e));
+        toast.success('TPO updated successfully!');
+        closeDrawer();
+      } else {
+        toast.error('Failed to update TPO!');
+      }
+    } catch (err) {
+      toast.error('Server error!' + err.message);
+    }
+  };
+
+  // Called when user cancels in edit modal
+  const cancelEditTPO = () => {
+    setShowEditConfirm(false);
+    setPendingEdit(false);
   };
 
   // Called when user confirms in custom modal
@@ -75,17 +139,49 @@ const Dashboard = () => {
         })
       });
       if (response.ok) {
-        const newTPO = { ...formData };
+        // Get the id from the backend response
+        const result = await response.json();
+        const newTPO = { ...formData, id: result.id, contact_no: formData.contact };
         setEntries([...entries, newTPO]);
         toast.success('TPO added successfully!');
         closeDrawer();
       } else {
         toast.error('Failed to add TPO!');
       }
-    // eslint-disable-next-line no-unused-vars
     } catch (err) {
-      toast.error('Server error!');
+      toast.error('Server error!' + err.message);
     }
+  };
+
+  // Delete TPO logic with custom modal
+  const handleDeleteTPO = (id) => {
+    setDeleteId(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteTPO = async () => {
+    setShowDeleteConfirm(false);
+    if (!deleteId) return;
+    // Removed toast for 'Deleting TPO...'
+    try {
+      const response = await fetch(`http://localhost:5000/api/students/delete/${deleteId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setEntries(entries.filter(e => e.id !== deleteId));
+        toast.success('TPO deleted successfully!');
+      } else {
+        toast.error('Failed to delete TPO!');
+      }
+    } catch (err) {
+      toast.error('Server error!' + err.message);
+    }
+    setDeleteId(null);
+  };
+
+  const cancelDeleteTPO = () => {
+    setShowDeleteConfirm(false);
+    setDeleteId(null);
   };
 
   // Called when user cancels in custom modal
@@ -179,20 +275,20 @@ const Dashboard = () => {
                 </thead>
                 <tbody>
                   {filteredEntries.map((entry, index) => (
-                    <tr key={index}>
+                    <tr key={entry.id || index}>
                       <td>{index + 1}</td>
                       <td>{entry.name}</td>
                       <td>{entry.college}</td>
                       <td><a href={`mailto:${entry.email}`}>{entry.email}</a></td>
-                      <td>{entry.contact}</td>
+                      <td>{entry.contact_no || entry.contact}</td>
                       <td>
-                        <button className="icon-btn edit-btn" title="Edit">
+                        <button className="icon-btn edit-btn" title="Edit" onClick={() => handleEditTPO(entry)}>
                           <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M14.7 2.29a1 1 0 0 1 1.42 0l1.59 1.59a1 1 0 0 1 0 1.42l-9.3 9.3-2.12.71.71-2.12 9.3-9.3z" stroke="#1976d2" strokeWidth="1.5" fill="none"/>
                             <path d="M3 17h14" stroke="#1976d2" strokeWidth="1.5" strokeLinecap="round"/>
                           </svg>
                         </button>
-                        <button className="icon-btn delete-btn" title="Delete">
+                        <button className="icon-btn delete-btn" title="Delete" onClick={() => handleDeleteTPO(entry.id)}>
                           <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="5" y="7" width="10" height="8" rx="1" stroke="#d32f2f" strokeWidth="1.5" fill="none"/>
                             <path d="M8 9v4M12 9v4" stroke="#d32f2f" strokeWidth="1.5" strokeLinecap="round"/>
@@ -210,12 +306,12 @@ const Dashboard = () => {
         </section>
       </main>
 
-      {/* Modal for Add TPO */}
+      {/* Modal for Add/Edit TPO */}
       {drawerOpen && (
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
-              <h2>Add TPO</h2>
+              <h2>{isEditMode ? 'Edit TPO' : 'Add TPO'}</h2>
               <button onClick={closeDrawer} className="close-btn">✕</button>
             </div>
             <form className="modal-form" onSubmit={handleSubmit}>
@@ -223,14 +319,27 @@ const Dashboard = () => {
               <input type="text" id="college" placeholder="College" required value={formData.college} onChange={handleChange} />
               <input type="email" id="email" placeholder="Email ID" required value={formData.email} onChange={handleChange} />
               <input type="text" id="contact" placeholder="Contact No." required maxLength="10" value={formData.contact} onChange={handleChange} />
-              <button type="submit" className="submit-btn" disabled={pendingSubmit}>Add</button>
+              <button type="submit" className="submit-btn" disabled={isEditMode ? pendingEdit : pendingSubmit}>{isEditMode ? 'Update' : 'Add'}</button>
               <button type="button" className="cancel-btn" onClick={closeDrawer}>Cancel</button>
             </form>
           </div>
         </div>
       )}
+      {/* Custom Confirmation Modal for Edit */}
+      {showEditConfirm && (
+        <div className="modal-overlay">
+          <div className="modal confirm-modal">
+            <h3>Confirm Edit</h3>
+            <p>Are you sure you want to update this TPO?</p>
+            <div className="modal-actions">
+              <button className="submit-btn" onClick={confirmEditTPO}>Update</button>
+              <button className="cancel-btn" onClick={cancelEditTPO}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* Custom Confirmation Modal */}
+      {/* Custom Confirmation Modal for Add */}
       {showConfirm && (
         <div className="modal-overlay">
           <div className="modal confirm-modal">
@@ -239,6 +348,20 @@ const Dashboard = () => {
             <div className="modal-actions">
               <button className="submit-btn" onClick={confirmAddTPO}>Confirm</button>
               <button className="cancel-btn" onClick={cancelAddTPO}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Modal for Delete */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="modal confirm-modal">
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to delete this TPO?</p>
+            <div className="modal-actions">
+              <button className="submit-btn" onClick={confirmDeleteTPO}>Delete</button>
+              <button className="cancel-btn" onClick={cancelDeleteTPO}>Cancel</button>
             </div>
           </div>
         </div>
