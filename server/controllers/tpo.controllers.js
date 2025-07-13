@@ -1,13 +1,13 @@
 import db from '../db/connection.js';
 
-export const getStudents = (req, res) => {
+export const getTPO = (req, res) => {
   db.query('SELECT * FROM tpo_details', (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.json(results);
   });
 };
 
-export const addStudents = (req, res) => {
+export const addTPO = (req, res) => {
   const { name, college, email, contact_no } = req.body;
   db.query(
     'INSERT INTO tpo_details (name, college, email, contact_no) VALUES (?, ?, ?, ?)',
@@ -19,7 +19,7 @@ export const addStudents = (req, res) => {
   );
 };
 
-export const updateStudents = (req, res) => {
+export const updateTPO = (req, res) => {
   const { id } = req.params;
   const { name, college, email, contact_no } = req.body;
   db.query(
@@ -32,7 +32,7 @@ export const updateStudents = (req, res) => {
   );
 }
 
-export const deleteStudents = (req, res) => {
+export const deleteTPO = (req, res) => {
   const { id } = req.params;
   db.query('DELETE FROM tpo_details WHERE id = ?', [id], (err) => {
     if (err) return res.status(500).json({ error: err });

@@ -61,7 +61,15 @@ body {
 }
 
 .welcome-msg {
-  font-size: 0.95rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  border-left: 4px solid #fdbe33;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 0.5rem;
 }
 
 .logout-btn {
@@ -278,7 +286,7 @@ body {
   position: relative;
   width: 90%;
   max-width: 438px;
-  min-height: 390px;
+  min-height: 250px;
 }
 
 .modal-header {
@@ -335,6 +343,18 @@ body {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  outline: none;
+}
+
+.close-btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.close-btn:hover {
+  color: #e6ad06;
+  transform: scale(1.1);
+  transition: all 0.2s ease;
 }
 
 .modal-form input {
@@ -409,6 +429,104 @@ body {
 .confirm-modal .cancel-btn:hover {
   background: #d32f2f;
   color: #fff;
+}
+
+/* Edit Profile Modal - Override confirm modal button styles */
+.modal:not(.confirm-modal) .submit-btn {
+  background-color: #FEC107 !important;
+  color: #111827 !important;
+  font-weight: bold !important;
+  transition: background-color 0.3s ease !important;
+  border: none !important;
+  margin-top: 0 !important;
+}
+
+.modal:not(.confirm-modal) .submit-btn:hover {
+  background-color: #e6ad06 !important;
+}
+
+.modal:not(.confirm-modal) .cancel-btn {
+  background-color: #EEEEEE !important;
+  color: #333333 !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin-top: 0 !important;
+}
+
+/* User Profile Section */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar {
+  width: 2rem;
+  height: 2rem;
+  background: linear-gradient(135deg, #fdbe33, #f59e0b);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Edit Profile Button */
+.edit-profile-btn {
+  padding: 0.4rem 0.8rem !important;
+  font-size: 0.75rem !important;
+  background-color: transparent !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.375rem !important;
+  color: #6b7280 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin-left: 0.5rem !important;
+}
+
+.edit-profile-btn:hover {
+  background-color: #f9fafb !important;
+  border-color: #9ca3af !important;
+  color: #374151 !important;
+}
+
+.edit-profile-btn:active {
+  background-color: #f3f4f6 !important;
+}
+
+/* Modal label and input styling for consistency */
+.modal-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.modal-input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  height: 2.5rem;
+  background-color: #F9F9F9;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.modal-input:focus {
+  border-color: #FEC107;
+  outline: none;
 }
 
 /* Responsive styles for Dashboard */

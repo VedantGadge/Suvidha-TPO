@@ -13,6 +13,7 @@ const Dashboard = () => {
     email: '',
     contact: ''
   });
+  const [currentUser, setCurrentUser] = useState(null); // Store current user data
   const [isEditMode, setIsEditMode] = useState(false); // Track if editing
   const [editId, setEditId] = useState(null); // Store id being edited
   const [showEditConfirm, setShowEditConfirm] = useState(false); // Edit confirm modal
@@ -23,24 +24,128 @@ const Dashboard = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // Custom confirm modal state (delete)
   const [deleteId, setDeleteId] = useState(null); // Store id to delete
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
+  const [showEditProfile, setShowEditProfile] = useState(false); // Edit profile modal
+  const [newName, setNewName] = useState(''); // New name for profile update
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Fetch current user data
   useEffect(() => {
-    fetch('http://localhost:5000/api/students/get')
-      .then(res => res.json())
-      .then(data => {
-        const mapped = data.map(item => ({
-          id: item.id, // include id from backend
-          name: item.name,
-          college: item.college,
-          email: item.email,
-          contact_no: item.contact_no || item.contact
-        }));
-        setEntries(mapped);
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:5000/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
-      .catch(() => setEntries([]));
-  }, []);
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          // Token might be expired, redirect to login
+          navigate('/login');
+          throw new Error('Unauthorized');
+        }
+      })
+      .then(data => {
+        setCurrentUser(data.user);
+      })
+      .catch(err => {
+        console.error('Failed to fetch user data:', err);
+        
+        // Handle specific error types with user-friendly messages
+        if (err.message.includes('429')) {
+          toast.error('🔒 Too many requests! Please wait before refreshing.', {
+            autoClose: 6000
+          });
+        } else if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+          toast.error('🚫 Your session has expired. Please log in again.', {
+            autoClose: 4000
+          });
+        } else {
+          toast.error('❌ Failed to load user data. Please refresh the page.', {
+            autoClose: 5000
+          });
+        }
+        
+        // If token is invalid, redirect to login
+        localStorage.removeItem('token');
+        navigate('/login');
+      });
+    } else {
+      // No token, redirect to login
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    fetch('http://localhost:5000/api/TPO/get', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (res.status === 403) {
+          // Token is invalid or expired
+          localStorage.removeItem('token');
+          navigate('/login');
+          throw new Error('Token expired or invalid');
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (data.message && data.message.includes('token')) {
+          // Handle token-related errors
+          localStorage.removeItem('token');
+          navigate('/login');
+          return;
+        }
+        if (Array.isArray(data)) {
+          const mapped = data.map(item => ({
+            id: item.id, // include id from backend
+            name: item.name,
+            college: item.college,
+            email: item.email,
+            contact_no: item.contact_no || item.contact
+          }));
+          setEntries(mapped);
+        } else {
+          console.error('Unexpected API response format:', data);
+          setEntries([]);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch TPO data:', err);
+        
+        // Enhanced error handling with user feedback
+        if (err.message.includes('429')) {
+          toast.error('🔒 Rate limit exceeded! Please wait before making more requests.', {
+            autoClose: 6000
+          });
+        } else if (err.message.includes('413')) {
+          toast.error('📁 Request too large! Please reduce data size.', {
+            autoClose: 5000
+          });
+        } else if (err.message.includes('401')) {
+          toast.error('🚫 Session expired! Redirecting to login...', {
+            autoClose: 3000
+          });
+          localStorage.removeItem('token');
+          navigate('/login');
+        } else if (err.message.includes('Failed to fetch')) {
+          toast.error('🌐 Network error! Check your connection.', {
+            autoClose: 5000
+          });
+        } else {
+          toast.error('❌ Failed to load data. Please try refreshing.', {
+            autoClose: 5000
+          });
+        }
+        
+        setEntries([]);
+      });
+  }, [navigate]);
 
   useEffect(() => {
     if (location.state?.showLoginToast) {
@@ -94,9 +199,13 @@ const Dashboard = () => {
     setPendingEdit(false);
     // Removed toast for 'Updating TPO...'
     try {
-      const response = await fetch(`http://localhost:5000/api/students/update/${editId}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/TPO/update/${editId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           name: formData.name,
           college: formData.college,
@@ -128,9 +237,13 @@ const Dashboard = () => {
     setPendingSubmit(false);
     toast.warning('Adding TPO...');
     try {
-      const response = await fetch('http://localhost:5000/api/students/add', {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/TPO/add', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           name: formData.name,
           college: formData.college,
@@ -164,8 +277,12 @@ const Dashboard = () => {
     if (!deleteId) return;
     // Removed toast for 'Deleting TPO...'
     try {
-      const response = await fetch(`http://localhost:5000/api/students/delete/${deleteId}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/TPO/delete/${deleteId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       if (response.ok) {
         setEntries(entries.filter(e => e.id !== deleteId));
@@ -191,7 +308,51 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('token'); // Clear the JWT token
     navigate('/login', { state: { showLogoutToast: true } });
+  };
+
+  // Edit profile functions
+  const handleEditProfile = () => {
+    setNewName(currentUser?.name || currentUser?.username || '');
+    setShowEditProfile(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!newName.trim()) {
+      toast.error('Name cannot be empty!');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/auth/update-profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: newName.trim() })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentUser({ ...currentUser, name: data.user.name });
+        setShowEditProfile(false);
+        toast.success('Profile updated successfully!');
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Failed to update profile!');
+      }
+    } catch (err) {
+      console.error('Profile update error:', err);
+      toast.error('Failed to update profile!');
+    }
+  };
+
+  const handleCancelEditProfile = () => {
+    setShowEditProfile(false);
+    setNewName('');
   };
 
   // Filtered entries based on search query
@@ -219,7 +380,27 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="header-right">
-            <span className="welcome-msg">{'Welcome'}</span>
+            <div className="welcome-msg">
+              <div className="user-profile">
+                {currentUser && (
+                  <div className="user-avatar">
+                    {(currentUser.name || currentUser.username).charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="user-info">
+                  <span>Welcome{currentUser ? `, ${currentUser.name || currentUser.username}` : ''}</span>
+                  {currentUser && (
+                    <button 
+                      className="edit-profile-btn" 
+                      onClick={handleEditProfile}
+                      title="Edit Profile"
+                    >
+                      ✏️ Edit
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
         </header>
@@ -362,6 +543,33 @@ const Dashboard = () => {
             <div className="modal-actions">
               <button className="submit-btn" onClick={confirmDeleteTPO}>Delete</button>
               <button className="cancel-btn" onClick={cancelDeleteTPO}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Edit Profile */}
+      {showEditProfile && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Edit Profile</h2>
+              <button onClick={handleCancelEditProfile} className="close-btn">✕</button>
+            </div>
+            <div className="modal-content">
+              <label htmlFor="username" className="modal-label">Name</label>
+              <input
+                type="text"
+                id="username"
+                className="modal-input"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Enter your name"
+              />
+            </div>
+            <div className="modal-actions">
+              <button className="submit-btn" onClick={handleSaveProfile}>Save</button>
+              <button className="cancel-btn" onClick={handleCancelEditProfile}>Cancel</button>
             </div>
           </div>
         </div>

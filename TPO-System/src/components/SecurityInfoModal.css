@@ -1,0 +1,251 @@
+/* Security Info Modal Styles */
+.security-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.security-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.security-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.security-modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.security-modal-close {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.security-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Tabs */
+.security-modal-tabs {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6c757d;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.tab-button.active {
+  color: #667eea;
+  background-color: white;
+  border-bottom-color: #667eea;
+}
+
+/* Content */
+.security-modal-content {
+  padding: 24px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.tab-content h3 {
+  margin: 0 0 20px 0;
+  color: #495057;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Security Cards */
+.security-card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: box-shadow 0.2s;
+}
+
+.security-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.security-card h4 {
+  margin: 0 0 12px 0;
+  color: #495057;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.security-card p {
+  margin: 6px 0;
+  color: #6c757d;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.security-card strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+/* Tip Cards */
+.tip-card {
+  background: linear-gradient(135deg, #667eea20, #764ba220);
+  border: 1px solid #667eea40;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.tip-card h4 {
+  margin: 0 0 12px 0;
+  color: #495057;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tip-card ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #6c757d;
+}
+
+.tip-card li {
+  margin-bottom: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Footer */
+.security-modal-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+  text-align: center;
+}
+
+.security-close-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.security-close-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .security-modal {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .security-modal-header {
+    padding: 16px 20px;
+  }
+  
+  .security-modal-header h2 {
+    font-size: 20px;
+  }
+  
+  .tab-button {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+  
+  .security-modal-content {
+    padding: 20px;
+    max-height: 350px;
+  }
+  
+  .tab-content h3 {
+    font-size: 18px;
+  }
+  
+  .security-card,
+  .violation-card,
+  .tip-card {
+    padding: 12px;
+  }
+}
+
+/* Scrollbar Styling */
+.security-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.security-modal-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.security-modal-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.security-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

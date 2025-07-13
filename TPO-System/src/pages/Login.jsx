@@ -3,6 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import CountUp from 'react-countup';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PasswordStrengthIndicator from '../components/PasswordStrengthIndicator';
+import SecurityInfoModal from '../components/SecurityInfoModal';
 import './Login.css';
 
 const Login = () => {
@@ -13,6 +15,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [activeTab, setActiveTab] = useState('about');
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,18 +29,144 @@ const Login = () => {
     }
   }, [location.state]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignUp && password !== confirmPassword) {
       toast.error('Passwords do not match!');
       return;
     }
-    // Simulate successful login - store email and redirect to dashboard
-    if (!isSignUp) {
-      localStorage.setItem('loggedInEmail', email);
-      navigate('/dashboard', { state: { showLoginToast: true } });
-    } else {
-      toast.success('Account created successfully!');
+
+    try {
+      if (!isSignUp) {
+        // Login - authenticate with backend
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            username: email, // Using email as username
+            password: password 
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // Store the JWT token
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('loggedInEmail', email);
+          toast.success('Login successful!');
+          navigate('/dashboard', { state: { showLoginToast: true } });
+        } else {
+          const errorData = await response.json();
+          
+          // Handle specific security errors with detailed messages
+          if (response.status === 429) {
+            if (errorData.type === 'AUTH_RATE_LIMIT_EXCEEDED') {
+              toast.error(`🔒 Too many login attempts! Please wait ${Math.ceil(errorData.retryAfter / 60)} minutes before trying again.`, {
+                autoClose: 8000
+              });
+            } else {
+              toast.error(`⚠️ Rate limit exceeded! Please wait ${Math.ceil(errorData.retryAfter / 60)} minutes before trying again.`, {
+                autoClose: 8000
+              });
+            }
+          } else if (response.status === 413) {
+            toast.error('📁 Request too large! Please reduce the size of your data.', {
+              autoClose: 6000
+            });
+          } else if (response.status === 401) {
+            toast.error('🚫 Invalid credentials. Please check your email and password.', {
+              autoClose: 5000
+            });
+          } else {
+            toast.error(errorData.message || 'Login failed. Please check your credentials.', {
+              autoClose: 5000
+            });
+          }
+        }
+      } else {
+        // Sign up - register with backend
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            username: email,
+            password: password,
+            name: name
+          }),
+        });
+
+        if (response.ok) {
+          toast.success('Account created successfully! Please sign in.');
+          setIsSignUp(false); // Switch to login form
+          setPassword(''); // Clear password fields
+          setConfirmPassword('');
+          setName('');
+        } else {
+          const errorData = await response.json();
+          
+          // Handle specific security and validation errors
+          if (response.status === 429) {
+            toast.error(`🔒 Too many registration attempts! Please wait ${Math.ceil(errorData.retryAfter / 60)} minutes before trying again.`, {
+              autoClose: 8000
+            });
+          } else if (response.status === 413) {
+            toast.error('📁 Request too large! Please reduce the size of your data.', {
+              autoClose: 6000
+            });
+          } else if (response.status === 400 && errorData.type === 'VALIDATION_ERROR') {
+            // Handle password validation errors with specific feedback
+            if (errorData.details && Array.isArray(errorData.details)) {
+              const passwordErrors = errorData.details
+                .filter(err => err.path === 'password')
+                .map(err => err.msg)
+                .join(' ');
+              
+              if (passwordErrors) {
+                toast.error(`🔐 Password requirements not met: ${passwordErrors}`, {
+                  autoClose: 8000
+                });
+              } else {
+                toast.error(`⚠️ Validation failed: ${errorData.details.map(err => err.msg).join(', ')}`, {
+                  autoClose: 8000
+                });
+              }
+            } else {
+              toast.error(`⚠️ ${errorData.message || 'Please check your input and try again.'}`, {
+                autoClose: 6000
+              });
+            }
+          } else if (response.status === 409) {
+            toast.error('👤 An account with this email already exists. Please try logging in instead.', {
+              autoClose: 6000
+            });
+          } else {
+            toast.error(errorData.message || 'Registration failed. Please try again.', {
+              autoClose: 5000
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      
+      // Handle network and other unexpected errors
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        toast.error('🌐 Network error! Please check your internet connection and try again.', {
+          autoClose: 6000
+        });
+      } else if (error.name === 'AbortError') {
+        toast.error('⏱️ Request timeout! Please try again.', {
+          autoClose: 5000
+        });
+      } else {
+        toast.error('❌ An unexpected error occurred. Please try again later.', {
+          autoClose: 5000
+        });
+      }
     }
   };
 
@@ -96,6 +225,7 @@ const Login = () => {
                             suffix="+"
                             enableScrollSpy
                             scrollSpyOnce
+                            preserveValue
                           />
                         </div>
                         <div className="stat-label">Years</div>
@@ -110,6 +240,7 @@ const Login = () => {
                             separator=","
                             enableScrollSpy
                             scrollSpyOnce
+                            preserveValue
                           />
                         </div>
                         <div className="stat-label">Lives Impacted</div>
@@ -233,7 +364,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="form-input password-input"
                     required
-                    minLength="6"
+                    minLength="8"
                   />
                   <button
                     type="button"
@@ -248,6 +379,14 @@ const Login = () => {
                     )}
                   </button>
                 </div>
+                
+                {/* Password Strength Indicator - Only show during sign up */}
+                {isSignUp && (
+                  <PasswordStrengthIndicator 
+                    password={password} 
+                    showRules={true} 
+                  />
+                )}
               </div>
 
               {isSignUp && (
@@ -263,7 +402,7 @@ const Login = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="form-input"
                     required
-                    minLength="6"
+                    minLength="8"
                   />
                 </div>
               )}
@@ -294,6 +433,26 @@ const Login = () => {
             </div>
           </div>
         </div>
+        
+        {/* Security Info Button */}
+        <button 
+          className="security-info-btn"
+          onClick={() => setShowSecurityModal(true)}
+          title="Security Information"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+          Security Info
+        </button>
+        
+        {/* Security Info Modal */}
+        <SecurityInfoModal 
+          isOpen={showSecurityModal} 
+          onClose={() => setShowSecurityModal(false)} 
+        />
       </div>
       <ToastContainer />
     </div>
