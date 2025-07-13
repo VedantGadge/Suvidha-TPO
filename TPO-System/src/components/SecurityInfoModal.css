@@ -16,9 +16,9 @@
 .security-modal {
   background: white;
   border-radius: 12px;
-  width: 90%;
-  max-width: 700px;
-  max-height: 90vh;
+  width: 95%;
+  max-width: 900px;
+  max-height: 95vh;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   animation: modalSlideIn 0.3s ease-out;
@@ -40,7 +40,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 24px 30px;
   border-bottom: 1px solid #e9ecef;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -48,7 +48,7 @@
 
 .security-modal-header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
 }
 
@@ -75,11 +75,12 @@
 
 .tab-button {
   flex: 1;
-  padding: 16px;
+  padding: 18px 20px;
   background: none;
   border: none;
   cursor: pointer;
   font-weight: 500;
+  font-size: 16px;
   color: #6c757d;
   transition: all 0.2s;
   border-bottom: 3px solid transparent;
@@ -98,15 +99,15 @@
 
 /* Content */
 .security-modal-content {
-  padding: 24px;
-  max-height: 400px;
+  padding: 30px;
+  max-height: 500px;
   overflow-y: auto;
 }
 
 .tab-content h3 {
-  margin: 0 0 20px 0;
+  margin: 0 0 24px 0;
   color: #495057;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
 }
 
@@ -115,8 +116,8 @@
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
   transition: box-shadow 0.2s;
 }
 
@@ -125,17 +126,17 @@
 }
 
 .security-card h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   color: #495057;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
 }
 
 .security-card p {
-  margin: 6px 0;
+  margin: 8px 0;
   color: #6c757d;
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .security-card strong {
@@ -148,32 +149,32 @@
   background: linear-gradient(135deg, #667eea20, #764ba220);
   border: 1px solid #667eea40;
   border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .tip-card h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   color: #495057;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
 }
 
 .tip-card ul {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 24px;
   color: #6c757d;
 }
 
 .tip-card li {
-  margin-bottom: 6px;
-  font-size: 14px;
-  line-height: 1.4;
+  margin-bottom: 8px;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 /* Footer */
 .security-modal-footer {
-  padding: 20px 24px;
+  padding: 24px 30px;
   border-top: 1px solid #e9ecef;
   background: #f8f9fa;
   text-align: center;
@@ -183,9 +184,10 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 14px 28px;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 16px;
   cursor: pointer;
   transition: transform 0.2s;
 }
@@ -198,52 +200,63 @@
 /* Responsive */
 @media (max-width: 768px) {
   .security-modal {
-    width: 95%;
-    margin: 10px;
+    width: 98%;
+    margin: 5px;
+    max-height: 98vh;
   }
   
   .security-modal-header {
-    padding: 16px 20px;
+    padding: 20px 24px;
   }
   
   .security-modal-header h2 {
-    font-size: 20px;
+    font-size: 22px;
   }
   
   .tab-button {
-    padding: 12px 8px;
-    font-size: 14px;
+    padding: 14px 12px;
+    font-size: 15px;
   }
   
   .security-modal-content {
-    padding: 20px;
-    max-height: 350px;
+    padding: 24px;
+    max-height: 400px;
   }
   
   .tab-content h3 {
-    font-size: 18px;
+    font-size: 20px;
   }
   
   .security-card,
-  .violation-card,
   .tip-card {
-    padding: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .security-card h4,
+  .tip-card h4 {
+    font-size: 16px;
+  }
+  
+  .security-card p,
+  .tip-card li {
+    font-size: 14px;
   }
 }
 
 /* Scrollbar Styling */
 .security-modal-content::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .security-modal-content::-webkit-scrollbar-track {
   background: #f1f1f1;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .security-modal-content::-webkit-scrollbar-thumb {
   background: #c1c1c1;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .security-modal-content::-webkit-scrollbar-thumb:hover {
