@@ -358,11 +358,15 @@ const Dashboard = () => {
   // Filtered entries based on search query
   const filteredEntries = entries.filter(entry => {
     const lowerCaseQuery = searchQuery.toLowerCase();
+    
+    // Get the contact number from either field name
+    const contactNumber = entry.contact_no || entry.contact || '';
+    
     return (
       entry.name.toLowerCase().includes(lowerCaseQuery) ||
       entry.college.toLowerCase().includes(lowerCaseQuery) ||
       entry.email.toLowerCase().includes(lowerCaseQuery) ||
-      (entry.contact && entry.contact.toString().includes(lowerCaseQuery))
+      contactNumber.toString().includes(lowerCaseQuery)
     );
   });
 

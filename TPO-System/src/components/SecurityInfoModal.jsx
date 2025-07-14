@@ -41,13 +41,13 @@ const SecurityInfoModal = ({ isOpen, onClose }) => {
               
               <div className="security-card">
                 <h4>🔐 Login Attempts</h4>
-                <p><strong>Limit:</strong> 5 attempts per 15 minutes</p>
-                <p><strong>Purpose:</strong> Prevents brute force password attacks</p>
+                <p><strong>Limit:</strong> 100 attempts per 1 minute</p>
+                <p><strong>Purpose:</strong> Prevents brute force password attacks while allowing flexible access</p>
               </div>
 
               <div className="security-card">
                 <h4>🌐 General API Requests</h4>
-                <p><strong>Limit:</strong> 100 requests per 15 minutes</p>
+                <p><strong>Limit:</strong> 1000 requests per 15 minutes</p>
                 <p><strong>Purpose:</strong> Prevents API abuse and ensures fair usage</p>
               </div>
 
@@ -102,7 +102,7 @@ const SecurityInfoModal = ({ isOpen, onClose }) => {
               <div className="tip-card">
                 <h4>📱 If You Experience Issues</h4>
                 <ul>
-                  <li>Rate limited? Wait the specified time before retrying</li>
+                  <li>Rate limited? Wait just 1 minute before retrying (very quick reset)</li>
                   <li>Session expired? Simply log in again</li>
                   <li>Network error? Check your internet connection</li>
                   <li>File too large? Compress or split your files</li>
