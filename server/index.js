@@ -49,20 +49,23 @@ const limiter = rateLimit({
 
 // Stricter rate limiting for auth endpoints with detailed feedback
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs for auth
+  windowMs: process.env.AUTH_RATE_LIMIT_WINDOW_MS || 5 * 60 * 1000, // Default: 15 minutes, configurable via .env
+  max: process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || 20, // Default: 5 attempts, configurable via .env
   message: {
     error: 'Too many authentication attempts',
-    details: 'You have exceeded the login attempt limit of 5 tries per 15 minutes. This is for security purposes.',
-    retryAfter: '15 minutes',
+    details: `You have exceeded the login attempt limit of ${process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || 5} tries per ${Math.round((process.env.AUTH_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000) / 60000)} minutes. This is for security purposes.`,
+    retryAfter: `${Math.round((process.env.AUTH_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000) / 60000)} minutes`,
     type: 'AUTH_RATE_LIMIT_EXCEEDED'
   },
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {
+    const windowMinutes = Math.round((process.env.AUTH_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000) / 60000);
+    const maxAttempts = process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || 5;
+    
     res.status(429).json({
       error: 'Too Many Authentication Attempts',
-      message: 'You have exceeded the login attempt limit of 5 tries per 15 minutes. This is for security purposes.',
+      message: `You have exceeded the login attempt limit of ${maxAttempts} tries per ${windowMinutes} minutes. This is for security purposes.`,
       retryAfter: Math.round(req.rateLimit.resetTime / 1000),
       remainingAttempts: 0,
       type: 'AUTH_RATE_LIMIT_EXCEEDED'
