@@ -9,14 +9,28 @@ export const getTPO = (req, res) => {
 
 export const addTPO = (req, res) => {
   const { name, college, email, contact_no } = req.body;
-  db.query(
-    'INSERT INTO tpo_details (name, college, email, contact_no) VALUES (?, ?, ?, ?)',
-    [name, college, email, contact_no],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.status(201).json({ message: 'Data added successfully', id: result.insertId });
+  // Check if email already exists
+  db.query('SELECT id FROM tpo_details WHERE email = ?', [email], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    if (results.length > 0) {
+      return res.status(409).json({ message: 'A TPO with this email already exists.' });
     }
-  );
+    // Insert new TPO
+    db.query(
+      'INSERT INTO tpo_details (name, college, email, contact_no) VALUES (?, ?, ?, ?)',
+      [name, college, email, contact_no],
+      (err, result) => {
+        if (err) {
+          // Handle duplicate error from DB unique constraint
+          if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ message: 'A TPO with this email already exists.' });
+          }
+          return res.status(500).json({ error: err });
+        }
+        res.status(201).json({ message: 'Data added successfully', id: result.insertId });
+      }
+    );
+  });
 };
 
 export const updateTPO = (req, res) => {

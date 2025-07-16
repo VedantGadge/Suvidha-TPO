@@ -235,7 +235,6 @@ const Dashboard = () => {
   const confirmAddTPO = async () => {
     setShowConfirm(false);
     setPendingSubmit(false);
-    toast.warning('Adding TPO...');
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:5000/api/TPO/add', {
@@ -259,7 +258,16 @@ const Dashboard = () => {
         toast.success('TPO added successfully!');
         closeDrawer();
       } else {
-        toast.error('Failed to add TPO!');
+        const errorData = await response.json();
+        if (
+          errorData.message &&
+          errorData.message.toLowerCase().includes('email') &&
+          errorData.message.toLowerCase().includes('exist')
+        ) {
+          toast.error('A TPO with this email already exists!');
+        } else {
+          toast.error(errorData.message || 'Failed to add TPO!');
+        }
       }
     } catch (err) {
       toast.error('Server error!' + err.message);
@@ -275,7 +283,6 @@ const Dashboard = () => {
   const confirmDeleteTPO = async () => {
     setShowDeleteConfirm(false);
     if (!deleteId) return;
-    // Removed toast for 'Deleting TPO...'
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:5000/api/TPO/delete/${deleteId}`, {
@@ -421,7 +428,7 @@ const Dashboard = () => {
           </div>
           <div className="stat-card">
             <p>Active Colleges</p>
-            <h2>{entries.length}</h2>
+            <h2>{[...new Set(entries.map(e => e.college))].length}</h2>
           </div>
           <div className="stat-card">
             <p>Active TPOs</p>
