@@ -427,12 +427,8 @@ const Dashboard = () => {
             <h2>{entries.length}</h2>
           </div>
           <div className="stat-card">
-            <p>Active Colleges</p>
-            <h2>{[...new Set(entries.map(e => e.college))].length}</h2>
-          </div>
-          <div className="stat-card">
-            <p>Active TPOs</p>
-            <h2 className="highlight">{entries.length}</h2>
+            <p>Total TPOs</p>
+            <h2>{entries.length}</h2>
           </div>
         </div>
 

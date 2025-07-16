@@ -1,10 +1,9 @@
 import db from '../db/connection.js';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
-const BCRYPT_ROUNDS = parseInt(process.env.BCRYPT_ROUNDS) || 12;
+
 
 // Input validation middleware
 export const validateRegister = [
@@ -40,7 +39,6 @@ export const validateUpdateProfile = [
     .isLength({ min: 1, max: 100 })
     .withMessage('Name must be between 1 and 100 characters')
 ];
-
 export const registerUser = async (req, res) => {
   try {
     // Check validation results
@@ -70,12 +68,11 @@ export const registerUser = async (req, res) => {
       return res.status(409).json({ error: 'User already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, BCRYPT_ROUNDS);
-    
+    // Store password directly in plain text
     const result = await new Promise((resolve, reject) => {
       db.query(
-        'INSERT INTO users (username, password_hash, name) VALUES (?, ?, ?)',
-        [username, hashedPassword, name || username.split('@')[0]],
+        'INSERT INTO users (username, password, name) VALUES (?, ?, ?)',
+        [username, password, name || username.split('@')[0]],
         (err, result) => {
           if (err) reject(err);
           resolve(result);
@@ -90,7 +87,7 @@ export const registerUser = async (req, res) => {
 
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
-      console.error('Registration error:', err);
+      console.error('Register error:', err);
     }
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -114,7 +111,7 @@ export const signInUser = async (req, res) => {
         'SELECT * FROM users WHERE username = ?',
         [username],
         (err, results) => {
-          if (err) reject(err);
+        // Store password directly in plain text
           resolve(results);
         }
       );
@@ -125,9 +122,8 @@ export const signInUser = async (req, res) => {
     }
 
     const user = results[0];
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-
-    if (!isMatch) {
+    // Compare plain text password
+    if (password !== user.password) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
@@ -193,7 +189,6 @@ export const updateUserProfile = async (req, res) => {
         details: errors.array() 
       });
     }
-
     const userId = req.user.id;
     const { name } = req.body;
 
@@ -235,4 +230,4 @@ export const updateUserProfile = async (req, res) => {
     }
     res.status(500).json({ error: 'Internal server error' });
   }
-};
+}
